@@ -1,5 +1,12 @@
 // テストのセットアップ
 
+// structuredCloneのポリフィル（Node.js 17+で利用可能だが、Jest環境では未定義）
+if (typeof global.structuredClone === 'undefined') {
+    global.structuredClone = (obj) => {
+        return JSON.parse(JSON.stringify(obj));
+    };
+}
+
 // fake-indexeddbをインポート
 const { indexedDB, IDBKeyRange } = require('fake-indexeddb');
 

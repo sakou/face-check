@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者用顔登録</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>管理者用顔登録</h1>
+        <a href="index.html" class="btn btn-back">メニューに戻る</a>
+
+        <div class="video-container">
+            <video id="video" autoplay muted></video>
+            <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="status" id="status">初期化中...</div>
+
+        <div class="controls">
+            <button id="captureBtn" class="btn btn-primary" disabled>顔をキャプチャ</button>
+            <button id="clearBtn" class="btn btn-secondary">クリア</button>
+        </div>
+
+        <div class="captured-faces">
+            <h2>キャプチャした顔</h2>
+            <div id="capturedList" class="face-grid"></div>
+        </div>
+
+        <div class="register-section" id="registerSection" style="display: none;">
+            <h3>名前を入力してください</h3>
+            <input type="text" id="nameInput" placeholder="名前">
+            <button id="registerBtn" class="btn btn-success">登録</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+    <script src="js/faceDB.js"></script>
+    <script src="js/faceRecognition.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

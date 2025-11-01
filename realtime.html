@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リアルタイム顔認識</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>リアルタイム顔認識</h1>
+        <a href="index.html" class="btn btn-back">メニューに戻る</a>
+
+        <div class="video-container">
+            <video id="video" autoplay muted></video>
+            <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="status" id="status">初期化中...</div>
+
+        <div class="recognized-faces">
+            <h2>認識した人の一覧（最大20人）</h2>
+            <div id="faceList" class="face-grid"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+    <script src="js/faceDB.js"></script>
+    <script src="js/faceRecognition.js"></script>
+    <script src="js/realtime.js"></script>
+</body>
+</html>

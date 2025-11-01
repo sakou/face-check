@@ -1,0 +1,446 @@
+/* 共通スタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    color: #fff;
+    margin: 20px 0;
+    font-size: 1.8em;
+}
+
+h3 {
+    color: #fff;
+    margin: 15px 0;
+    font-size: 1.3em;
+}
+
+/* ボタン共通スタイル */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #45a049;
+}
+
+.btn-secondary {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #0b7dda;
+}
+
+.btn-info {
+    background: #FF9800;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #e68900;
+}
+
+.btn-success {
+    background: #8BC34A;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #7cb342;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    margin-bottom: 20px;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+/* メニュー（トップページ） */
+.menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.menu-item {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+}
+
+.menu-item h2 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.menu-item p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* ビデオコンテナ */
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ステータス表示 */
+.status {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 顔グリッド */
+.face-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.face-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.face-card:hover {
+    transform: scale(1.05);
+}
+
+.face-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.face-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.face-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-correct,
+.btn-incorrect {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-correct {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-correct:hover {
+    background: #45a049;
+    transform: scale(1.1);
+}
+
+.btn-incorrect {
+    background: #f44336;
+    color: white;
+}
+
+.btn-incorrect:hover {
+    background: #da190b;
+    transform: scale(1.1);
+}
+
+/* 認識した顔一覧 */
+.recognized-faces {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+}
+
+.recognized-faces h2 {
+    margin-bottom: 20px;
+}
+
+/* キャプチャした顔 */
+.captured-faces {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+}
+
+.captured-faces h2 {
+    margin-bottom: 20px;
+}
+
+/* コントロール */
+.controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* 登録セクション */
+.register-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.register-section input {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin: 10px;
+    width: 300px;
+    max-width: 100%;
+}
+
+/* クイズコンテナ */
+.quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#quizSection {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.quiz-face {
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+.quiz-face img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#quizSection input {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin: 15px auto;
+    width: 300px;
+    max-width: 100%;
+    display: block;
+}
+
+.quiz-stats {
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.quiz-stats p {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#noQuizAvailable {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+#noQuizAvailable p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #666;
+}
+
+/* レスポンシブデザイン（スマートフォン対応） */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .menu-item {
+        padding: 20px;
+    }
+
+    .face-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .register-section input,
+    #quizSection input {
+        width: 100%;
+    }
+
+    .video-container {
+        margin: 0 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    .face-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .menu-item {
+        padding: 15px;
+    }
+
+    .btn-correct,
+    .btn-incorrect {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+}

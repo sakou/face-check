@@ -1,0 +1,44 @@
+{
+  "name": "face-recognition-app",
+  "version": "1.0.0",
+  "description": "Browser-based face recognition application",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "lint": "eslint js/**/*.js",
+    "serve": "npx http-server -p 8080"
+  },
+  "keywords": [
+    "face-recognition",
+    "face-api",
+    "browser",
+    "javascript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/jest": "^29.5.11",
+    "eslint": "^8.56.0",
+    "fake-indexeddb": "^5.0.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パブリック用クイズ</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>顔クイズ</h1>
+        <a href="index.html" class="btn btn-back">メニューに戻る</a>
+
+        <div class="quiz-container">
+            <div id="quizContent">
+                <div class="status" id="status">初期化中...</div>
+            </div>
+        </div>
+
+        <div id="quizSection" style="display: none;">
+            <div class="quiz-face">
+                <img id="quizFaceImage" alt="この人は誰？">
+            </div>
+            <h2>この人は誰ですか？</h2>
+            <input type="text" id="answerInput" placeholder="名前を入力">
+            <button id="submitAnswer" class="btn btn-primary">回答</button>
+            <button id="skipBtn" class="btn btn-secondary">スキップ</button>
+
+            <div class="quiz-stats">
+                <p>回答済み: <span id="answeredCount">0</span></p>
+            </div>
+        </div>
+
+        <div id="noQuizAvailable" style="display: none;">
+            <p>現在、クイズ対象の顔がありません。</p>
+            <p>管理者用ページで顔をキャプチャしてください。</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+    <script src="js/faceDB.js"></script>
+    <script src="js/faceRecognition.js"></script>
+    <script src="js/quiz.js"></script>
+</body>
+</html>

@@ -68,6 +68,53 @@ npm run serve
 
 ブラウザで `http://localhost:8080` にアクセスしてください。
 
+### Podman/Dockerを使用する場合（推奨）
+
+Node.js環境がない場合や、コンテナで実行したい場合：
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/yourusername/face-check.git
+cd face-check
+
+# Podmanでイメージをビルド
+podman build -t face-recognition-app .
+
+# コンテナを起動
+podman run -d -p 8080:8080 --name face-app face-recognition-app
+
+# ブラウザで http://localhost:8080 にアクセス
+
+# コンテナを停止
+podman stop face-app
+
+# コンテナを削除
+podman rm face-app
+```
+
+**Dockerを使用する場合も同様：**
+```bash
+# Dockerでイメージをビルド
+docker build -t face-recognition-app .
+
+# コンテナを起動
+docker run -d -p 8080:8080 --name face-app face-recognition-app
+
+# ブラウザで http://localhost:8080 にアクセス
+
+# コンテナを停止
+docker stop face-app
+
+# コンテナを削除
+docker rm face-app
+```
+
+**注意事項：**
+- コンテナ内でカメラアクセスはできません
+- コンテナはWebサーバーとして動作し、ブラウザからアクセスします
+- カメラはブラウザ側（ホストマシン）で動作します
+- HTTPSが必要な場合は、リバースプロキシ（nginx等）を使用してください
+
 ## テスト
 
 ### 単体テスト

@@ -181,7 +181,9 @@ class FaceRecognitionSystem {
             const box = detection.detection.box;
             const drawBox = new faceapi.draw.DrawBox(box, {
                 label: labels[i] || 'unknown',
-                boxColor: labels[i] && labels[i] !== 'unknown' ? '#00ff00' : '#ff0000'
+                boxColor: labels[i] && labels[i] !== 'unknown' ? '#00ff00' : '#ff0000',
+                lineWidth: 3,
+                fontSize: 24
             });
             drawBox.draw(canvas);
         });

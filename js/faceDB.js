@@ -37,14 +37,14 @@ class FaceDB {
         });
     }
 
-    // 顔データを保存
+    // 顔データを保存（複数角度対応）
     async saveFace(descriptor, imageData, name = 'unknown') {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(['faces'], 'readwrite');
             const store = transaction.objectStore('faces');
 
             const faceData = {
-                descriptor: Array.from(descriptor),
+                descriptors: [Array.from(descriptor)], // 配列として保存（複数角度対応）
                 imageData: imageData,
                 name: name,
                 timestamp: Date.now(),
@@ -57,14 +57,29 @@ class FaceDB {
         });
     }
 
-    // すべての顔データを取得
+    // すべての顔データを取得（後方互換性のため正規化）
     async getAllFaces() {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(['faces'], 'readonly');
             const store = transaction.objectStore('faces');
             const request = store.getAll();
 
-            request.onsuccess = () => resolve(request.result);
+            request.onsuccess = () => {
+                const faces = request.result;
+                // 古いデータ形式（descriptor）を新しい形式（descriptors配列）に正規化
+                const normalizedFaces = faces.map(face => {
+                    if (face.descriptor && !face.descriptors) {
+                        // 古い形式：descriptorを配列に変換
+                        face.descriptors = [face.descriptor];
+                        delete face.descriptor;
+                    } else if (!face.descriptors) {
+                        // descriptorsがない場合は空配列
+                        face.descriptors = [];
+                    }
+                    return face;
+                });
+                resolve(normalizedFaces);
+            };
             request.onerror = () => reject(request.error);
         });
     }
@@ -115,6 +130,29 @@ class FaceDB {
     // 顔の名前を更新
     async updateFaceName(id, name) {
         return this.updateFace(id, { name: name });
+    }
+
+    // 既存の顔に新しい角度のdescriptorを追加
+    async addDescriptorToFace(id, descriptor) {
+        const face = await this.getFaceById(id);
+        if (!face) {
+            throw new Error('Face not found');
+        }
+
+        // descriptorsが配列でない場合は配列に変換
+        if (!Array.isArray(face.descriptors)) {
+            if (face.descriptor) {
+                face.descriptors = [face.descriptor];
+                delete face.descriptor;
+            } else {
+                face.descriptors = [];
+            }
+        }
+
+        // 新しいdescriptorを追加（重複チェックはしない）
+        face.descriptors.push(Array.from(descriptor));
+
+        return this.updateFace(id, { descriptors: face.descriptors });
     }
 
     // クイズの回答を記録

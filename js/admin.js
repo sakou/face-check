@@ -259,19 +259,61 @@ function renderRegisteredFaces(faces) {
 
         const nameLabel = document.createElement('div');
         nameLabel.className = 'face-name';
-        nameLabel.textContent = face.name;
+        const descriptorCount = face.descriptors ? face.descriptors.length : 0;
+        nameLabel.textContent = `${face.name} (${descriptorCount}角度)`;
+
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'face-buttons';
+
+        const addAngleBtn = document.createElement('button');
+        addAngleBtn.textContent = '角度追加';
+        addAngleBtn.className = 'btn btn-small btn-info';
+        addAngleBtn.onclick = () => addAngleToFace(face.id);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = '削除';
         deleteBtn.className = 'btn btn-small btn-danger';
         deleteBtn.onclick = () => deleteRegisteredFace(face.id);
 
+        buttonsContainer.appendChild(addAngleBtn);
+        buttonsContainer.appendChild(deleteBtn);
+
         faceCard.appendChild(img);
         faceCard.appendChild(nameLabel);
-        faceCard.appendChild(deleteBtn);
+        faceCard.appendChild(buttonsContainer);
 
         registeredListEl.appendChild(faceCard);
     });
+}
+
+// 既存の顔に新しい角度を追加
+async function addAngleToFace(faceId) {
+    if (currentDetections.length === 0) {
+        alert('顔が検出されていません。カメラに顔を映してください。');
+        return;
+    }
+
+    try {
+        const face = await faceDB.getFaceById(faceId);
+        if (!face) {
+            alert('顔データが見つかりません');
+            return;
+        }
+
+        const addedCount = currentDetections.length;
+
+        // 検出された全ての顔を追加
+        for (const detection of currentDetections) {
+            const descriptor = detection.descriptor;
+            await faceDB.addDescriptorToFace(faceId, descriptor);
+        }
+
+        await loadRegisteredFaces();
+        alert(`「${face.name}」に${addedCount}個の新しい角度を追加しました`);
+    } catch (error) {
+        console.error('角度追加エラー:', error);
+        alert('角度の追加に失敗しました: ' + error.message);
+    }
 }
 
 // 登録済み顔を削除

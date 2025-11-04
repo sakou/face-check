@@ -4,7 +4,8 @@ class FaceRecognitionSystem {
     constructor() {
         this.modelsLoaded = false;
         this.MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-        this.MATCH_THRESHOLD = 0.6; // マッチング閾値（低いほど厳格）
+        this.MATCH_THRESHOLD = 0.45; // マッチング閾値（低いほど厳格） 0.6→0.45に変更
+        this.DUPLICATE_THRESHOLD = 0.45; // 重複判定の閾値（管理者ページでの同一人物判定）
     }
 
     // モデルをロード

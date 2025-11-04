@@ -105,6 +105,15 @@ h3 {
     background: #7cb342;
 }
 
+.btn-danger {
+    background: #f44336;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #da190b;
+}
+
 .btn-back {
     background: rgba(255, 255, 255, 0.2);
     color: white;
@@ -281,6 +290,18 @@ video {
 }
 
 .captured-faces h2 {
+    margin-bottom: 20px;
+}
+
+/* 登録済みの顔一覧 */
+.registered-faces {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+}
+
+.registered-faces h2 {
     margin-bottom: 20px;
 }
 

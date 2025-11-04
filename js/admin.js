@@ -9,6 +9,8 @@ let clearBtnEl;
 let registerSectionEl;
 let nameInputEl;
 let registerBtnEl;
+let registeredListEl;
+let refreshListBtnEl;
 let detectionInterval;
 let capturedFaces = []; // キャプチャした顔データ
 let currentDetections = []; // 現在検出中の顔
@@ -24,6 +26,8 @@ async function init() {
     registerSectionEl = document.getElementById('registerSection');
     nameInputEl = document.getElementById('nameInput');
     registerBtnEl = document.getElementById('registerBtn');
+    registeredListEl = document.getElementById('registeredList');
+    refreshListBtnEl = document.getElementById('refreshListBtn');
 
     try {
         statusEl.textContent = 'データベースを初期化中...';
@@ -48,9 +52,13 @@ async function init() {
         captureBtnEl.addEventListener('click', captureFaces);
         clearBtnEl.addEventListener('click', clearCaptured);
         registerBtnEl.addEventListener('click', registerFaces);
+        refreshListBtnEl.addEventListener('click', loadRegisteredFaces);
 
         // 顔検出を開始
         startDetection();
+
+        // 登録済み顔一覧を読み込み
+        await loadRegisteredFaces();
 
     } catch (error) {
         statusEl.textContent = 'エラー: ' + error.message;
@@ -98,7 +106,7 @@ async function captureFaces() {
             // 同じ人が既にキャプチャされているかチェック
             const isDuplicate = capturedFaces.some(face => {
                 const distance = faceRecognition.compareFaces(descriptor, face.descriptor);
-                return distance < 0.6; // 同一人物の閾値
+                return distance < faceRecognition.DUPLICATE_THRESHOLD; // 同一人物の閾値
             });
 
             if (!isDuplicate) {
@@ -210,11 +218,75 @@ async function registerFaces() {
         nameInputEl.value = '';
         statusEl.textContent = '顔を検出中...';
 
+        // 登録済み顔一覧を更新
+        await loadRegisteredFaces();
+
     } catch (error) {
         alert('登録エラー: ' + error.message);
         console.error(error);
     } finally {
         registerBtnEl.disabled = false;
+    }
+}
+
+// 登録済み顔一覧を読み込み
+async function loadRegisteredFaces() {
+    try {
+        const faces = await faceDB.getAllFaces();
+        renderRegisteredFaces(faces);
+    } catch (error) {
+        console.error('顔一覧の読み込みエラー:', error);
+        alert('顔一覧の読み込みに失敗しました');
+    }
+}
+
+// 登録済み顔一覧を描画
+function renderRegisteredFaces(faces) {
+    registeredListEl.innerHTML = '';
+
+    if (faces.length === 0) {
+        registeredListEl.innerHTML = '<p>登録済みの顔がありません</p>';
+        return;
+    }
+
+    faces.forEach((face) => {
+        const faceCard = document.createElement('div');
+        faceCard.className = 'face-card';
+
+        const img = document.createElement('img');
+        img.src = face.imageData;
+        img.alt = face.name;
+
+        const nameLabel = document.createElement('div');
+        nameLabel.className = 'face-name';
+        nameLabel.textContent = face.name;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '削除';
+        deleteBtn.className = 'btn btn-small btn-danger';
+        deleteBtn.onclick = () => deleteRegisteredFace(face.id);
+
+        faceCard.appendChild(img);
+        faceCard.appendChild(nameLabel);
+        faceCard.appendChild(deleteBtn);
+
+        registeredListEl.appendChild(faceCard);
+    });
+}
+
+// 登録済み顔を削除
+async function deleteRegisteredFace(faceId) {
+    if (!confirm('この顔を削除しますか？')) {
+        return;
+    }
+
+    try {
+        await faceDB.deleteFace(faceId);
+        await loadRegisteredFaces();
+        alert('顔を削除しました');
+    } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
     }
 }
 

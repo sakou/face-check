@@ -33,6 +33,14 @@
             <input type="text" id="nameInput" placeholder="名前">
             <button id="registerBtn" class="btn btn-success">登録</button>
         </div>
+
+        <div class="registered-faces">
+            <h2>登録済みの顔一覧</h2>
+            <div class="controls">
+                <button id="refreshListBtn" class="btn btn-secondary">一覧を更新</button>
+            </div>
+            <div id="registeredList" class="face-grid"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>

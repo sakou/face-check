@@ -69,7 +69,7 @@ function startDetection() {
                 for (const detection of detections) {
                     const descriptor = detection.descriptor;
 
-                    // 既存の顔とマッチング
+                    // 既存の顔とマッチング（厳格な閾値）
                     const match = await faceRecognition.matchFace(descriptor);
 
                     if (match) {
@@ -79,17 +79,27 @@ function startDetection() {
                         // 表示リストを更新（既存の顔を前に持ってくる）
                         updateDisplayedFaces(match.match);
                     } else {
-                        // 新しい顔を保存
-                        const imageData = await faceRecognition.captureFaceImage(video, detection);
-                        const faceId = await faceDB.saveFace(descriptor, imageData);
+                        // 厳格な閾値でマッチしなかった場合、緩い閾値で再度チェック
+                        // これにより、同じ人のunknownが複数作成されるのを防ぐ
+                        const looseMatch = await faceRecognition.matchFaceWithThreshold(descriptor, 0.55);
 
-                        // 新しい顔を取得
-                        const newFace = await faceDB.getFaceById(faceId);
+                        if (looseMatch) {
+                            // 既存のunknownにマッチした
+                            labels.push(looseMatch.match.name || 'unknown');
+                            updateDisplayedFaces(looseMatch.match);
+                        } else {
+                            // 完全に新しい顔を保存
+                            const imageData = await faceRecognition.captureFaceImage(video, detection);
+                            const faceId = await faceDB.saveFace(descriptor, imageData);
 
-                        // 表示リストに追加
-                        addToDisplayedFaces(newFace);
+                            // 新しい顔を取得
+                            const newFace = await faceDB.getFaceById(faceId);
 
-                        labels.push('unknown');
+                            // 表示リストに追加
+                            addToDisplayedFaces(newFace);
+
+                            labels.push('unknown');
+                        }
                     }
                 }
 

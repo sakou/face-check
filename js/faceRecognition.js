@@ -78,6 +78,33 @@ class FaceRecognitionSystem {
         return null;
     }
 
+    // カスタム閾値でマッチング（unknown顔の統合用）
+    async matchFaceWithThreshold(descriptor, threshold) {
+        const faces = await faceDB.getAllFaces();
+
+        let bestMatch = null;
+        let bestDistance = Infinity;
+
+        for (const face of faces) {
+            const distance = this.compareFaces(descriptor, face.descriptor);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestMatch = face;
+            }
+        }
+
+        // カスタム閾値以下なら一致とみなす
+        if (bestDistance < threshold) {
+            return {
+                match: bestMatch,
+                distance: bestDistance,
+                confidence: 1 - bestDistance
+            };
+        }
+
+        return null;
+    }
+
     // 顔画像をキャプチャ
     async captureFaceImage(video, detection) {
         const canvas = document.createElement('canvas');

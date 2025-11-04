@@ -51,7 +51,7 @@ class FaceRecognitionSystem {
         return faceapi.euclideanDistance(d1, d2);
     }
 
-    // データベース内の顔とマッチング
+    // データベース内の顔とマッチング（複数角度対応）
     async matchFace(descriptor) {
         const faces = await faceDB.getAllFaces();
 
@@ -59,10 +59,14 @@ class FaceRecognitionSystem {
         let bestDistance = Infinity;
 
         for (const face of faces) {
-            const distance = this.compareFaces(descriptor, face.descriptor);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestMatch = face;
+            // 複数のdescriptorsと比較し、最も近いものを使用
+            const descriptors = face.descriptors || [];
+            for (const faceDescriptor of descriptors) {
+                const distance = this.compareFaces(descriptor, faceDescriptor);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = face;
+                }
             }
         }
 
@@ -78,7 +82,7 @@ class FaceRecognitionSystem {
         return null;
     }
 
-    // カスタム閾値でマッチング（unknown顔の統合用）
+    // カスタム閾値でマッチング（unknown顔の統合用・複数角度対応）
     async matchFaceWithThreshold(descriptor, threshold) {
         const faces = await faceDB.getAllFaces();
 
@@ -86,10 +90,14 @@ class FaceRecognitionSystem {
         let bestDistance = Infinity;
 
         for (const face of faces) {
-            const distance = this.compareFaces(descriptor, face.descriptor);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestMatch = face;
+            // 複数のdescriptorsと比較し、最も近いものを使用
+            const descriptors = face.descriptors || [];
+            for (const faceDescriptor of descriptors) {
+                const distance = this.compareFaces(descriptor, faceDescriptor);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = face;
+                }
             }
         }
 
@@ -173,7 +181,9 @@ class FaceRecognitionSystem {
             const box = detection.detection.box;
             const drawBox = new faceapi.draw.DrawBox(box, {
                 label: labels[i] || 'unknown',
-                boxColor: labels[i] && labels[i] !== 'unknown' ? '#00ff00' : '#ff0000'
+                boxColor: labels[i] && labels[i] !== 'unknown' ? '#00ff00' : '#ff0000',
+                lineWidth: 3,
+                fontSize: 24
             });
             drawBox.draw(canvas);
         });

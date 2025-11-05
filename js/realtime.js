@@ -74,10 +74,11 @@ function startDetection() {
 
                     if (match) {
                         // 既知の顔
-                        labels.push(match.match.name || 'unknown');
+                        const confidence = Math.round((1 - match.distance) * 100);
+                        labels.push(`${match.match.name || 'unknown'} (${confidence}%)`);
 
-                        // 表示リストを更新（既存の顔を前に持ってくる）
-                        updateDisplayedFaces(match.match);
+                        // 表示リストを更新（信頼度付き）
+                        updateDisplayedFaces(match.match, confidence);
                     } else {
                         // 厳格な閾値でマッチしなかった場合、緩い閾値で再度チェック
                         // これにより、同じ人のunknownが複数作成されるのを防ぐ
@@ -85,8 +86,9 @@ function startDetection() {
 
                         if (looseMatch) {
                             // 既存のunknownにマッチした
-                            labels.push(looseMatch.match.name || 'unknown');
-                            updateDisplayedFaces(looseMatch.match);
+                            const confidence = Math.round((1 - looseMatch.distance) * 100);
+                            labels.push(`${looseMatch.match.name || 'unknown'} (${confidence}%)`);
+                            updateDisplayedFaces(looseMatch.match, confidence);
                         } else {
                             // 完全に新しい顔を保存
                             const imageData = await faceRecognition.captureFaceImage(video, detection);
@@ -96,9 +98,9 @@ function startDetection() {
                             const newFace = await faceDB.getFaceById(faceId);
 
                             // 表示リストに追加
-                            addToDisplayedFaces(newFace);
+                            addToDisplayedFaces(newFace, 0);
 
-                            labels.push('unknown');
+                            labels.push('unknown (新規)');
                         }
                     }
                 }
@@ -116,15 +118,18 @@ function startDetection() {
 }
 
 // 表示リストに顔を追加（20人制限）
-function addToDisplayedFaces(face) {
+function addToDisplayedFaces(face, confidence = 0) {
     // 既に表示リストにあるかチェック
     const existingIndex = displayedFaces.findIndex(f => f.id === face.id);
     if (existingIndex !== -1) {
         return;
     }
 
+    // 信頼度スコアを追加
+    const faceWithConfidence = { ...face, confidence };
+
     // リストの先頭に追加
-    displayedFaces.unshift(face);
+    displayedFaces.unshift(faceWithConfidence);
 
     // 20人を超えたら古いものを削除
     if (displayedFaces.length > MAX_DISPLAY_FACES) {
@@ -135,16 +140,19 @@ function addToDisplayedFaces(face) {
 }
 
 // 表示リストを更新（既存の顔を前に持ってくる）
-function updateDisplayedFaces(face) {
+function updateDisplayedFaces(face, confidence = 0) {
     const existingIndex = displayedFaces.findIndex(f => f.id === face.id);
+
+    // 信頼度スコアを追加
+    const faceWithConfidence = { ...face, confidence };
 
     if (existingIndex !== -1) {
         // 既に表示されている場合は、リストの先頭に移動
         displayedFaces.splice(existingIndex, 1);
-        displayedFaces.unshift(face);
+        displayedFaces.unshift(faceWithConfidence);
     } else {
         // 表示されていない場合は追加
-        addToDisplayedFaces(face);
+        addToDisplayedFaces(face, confidence);
     }
 
     renderFaceList();
@@ -164,7 +172,11 @@ function renderFaceList() {
 
         const nameEl = document.createElement('div');
         nameEl.className = 'face-name';
-        nameEl.textContent = face.name || 'unknown';
+
+        // 信頼度スコアを表示
+        const confidenceText = face.confidence > 0 ? ` (${face.confidence}%)` : '';
+        const confidenceColor = getConfidenceColor(face.confidence);
+        nameEl.innerHTML = `${face.name || 'unknown'}<span style="color: ${confidenceColor}; font-size: 0.9em;">${confidenceText}</span>`;
 
         const buttonsEl = document.createElement('div');
         buttonsEl.className = 'face-buttons';
@@ -192,6 +204,19 @@ function renderFaceList() {
 
         faceListEl.appendChild(faceCard);
     });
+}
+
+// 信頼度スコアに応じた色を返す
+function getConfidenceColor(confidence) {
+    if (confidence >= 70) {
+        return '#00ff00'; // 緑 - 高い信頼度
+    } else if (confidence >= 50) {
+        return '#ffff00'; // 黄色 - 中程度の信頼度
+    } else if (confidence > 0) {
+        return '#ff6600'; // オレンジ - 低い信頼度
+    } else {
+        return '#ffffff'; // 白 - 新規
+    }
 }
 
 // 正しい認識の処理

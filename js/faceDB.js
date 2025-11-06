@@ -220,6 +220,78 @@ class FaceDB {
             request.onerror = () => reject(request.error);
         });
     }
+
+    // すべてのデータをエクスポート（JSON形式）
+    async exportAllData() {
+        const faces = await this.getAllFaces();
+
+        const exportData = {
+            version: 1,
+            exportDate: new Date().toISOString(),
+            facesCount: faces.length,
+            faces: faces
+        };
+
+        return JSON.stringify(exportData, null, 2);
+    }
+
+    // データをインポート
+    async importData(jsonData) {
+        let importData;
+
+        try {
+            importData = JSON.parse(jsonData);
+        } catch (error) {
+            throw new Error('無効なJSON形式です');
+        }
+
+        if (!importData.faces || !Array.isArray(importData.faces)) {
+            throw new Error('無効なデータ形式です');
+        }
+
+        // データをインポート（既存データは保持）
+        const transaction = this.db.transaction(['faces'], 'readwrite');
+        const store = transaction.objectStore('faces');
+
+        let importedCount = 0;
+
+        for (const face of importData.faces) {
+            // idを削除して新規追加（重複を避ける）
+            const faceData = {
+                descriptors: face.descriptors || [],
+                imageData: face.imageData,
+                name: face.name,
+                timestamp: face.timestamp || Date.now(),
+                quizAnswers: face.quizAnswers || []
+            };
+
+            await new Promise((resolve, reject) => {
+                const request = store.add(faceData);
+                request.onsuccess = () => {
+                    importedCount++;
+                    resolve();
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        return importedCount;
+    }
+
+    // 名前で検索（部分一致）
+    async searchByName(query) {
+        const allFaces = await this.getAllFaces();
+
+        if (!query || query.trim() === '') {
+            return allFaces;
+        }
+
+        const lowerQuery = query.toLowerCase().trim();
+        return allFaces.filter(face => {
+            const name = face.name || '';
+            return name.toLowerCase().includes(lowerQuery);
+        });
+    }
 }
 
 // グローバルインスタンスを作成

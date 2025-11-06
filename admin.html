@@ -40,8 +40,13 @@
                 「角度追加」ボタンで、下向き・横向きなど異なる角度の顔を追加できます。<br>
                 複数の角度を登録すると、様々な向きでも正しく認識されるようになります。
             </p>
+
             <div class="controls">
+                <input type="text" id="searchInput" placeholder="名前で検索..." style="margin-right: 10px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; min-width: 200px;">
                 <button id="refreshListBtn" class="btn btn-secondary">一覧を更新</button>
+                <button id="exportBtn" class="btn btn-primary">エクスポート</button>
+                <button id="importBtn" class="btn btn-primary">インポート</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
             </div>
             <div id="registeredList" class="face-grid"></div>
         </div>

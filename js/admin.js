@@ -11,9 +11,14 @@ let nameInputEl;
 let registerBtnEl;
 let registeredListEl;
 let refreshListBtnEl;
+let searchInputEl;
+let exportBtnEl;
+let importBtnEl;
+let importFileEl;
 let detectionInterval;
 let capturedFaces = []; // キャプチャした顔データ
 let currentDetections = []; // 現在検出中の顔
+let allRegisteredFaces = []; // 全ての登録済み顔（検索用）
 
 // 初期化
 async function init() {
@@ -28,6 +33,10 @@ async function init() {
     registerBtnEl = document.getElementById('registerBtn');
     registeredListEl = document.getElementById('registeredList');
     refreshListBtnEl = document.getElementById('refreshListBtn');
+    searchInputEl = document.getElementById('searchInput');
+    exportBtnEl = document.getElementById('exportBtn');
+    importBtnEl = document.getElementById('importBtn');
+    importFileEl = document.getElementById('importFile');
 
     try {
         statusEl.textContent = 'データベースを初期化中...';
@@ -53,6 +62,10 @@ async function init() {
         clearBtnEl.addEventListener('click', clearCaptured);
         registerBtnEl.addEventListener('click', registerFaces);
         refreshListBtnEl.addEventListener('click', loadRegisteredFaces);
+        searchInputEl.addEventListener('input', handleSearch);
+        exportBtnEl.addEventListener('click', exportData);
+        importBtnEl.addEventListener('click', () => importFileEl.click());
+        importFileEl.addEventListener('change', importData);
 
         // 顔検出を開始
         startDetection();
@@ -233,10 +246,66 @@ async function registerFaces() {
 async function loadRegisteredFaces() {
     try {
         const faces = await faceDB.getAllFaces();
+        allRegisteredFaces = faces; // 全ての顔を保存（検索用）
         renderRegisteredFaces(faces);
     } catch (error) {
         console.error('顔一覧の読み込みエラー:', error);
         alert('顔一覧の読み込みに失敗しました');
+    }
+}
+
+// 検索処理
+async function handleSearch() {
+    const query = searchInputEl.value;
+    try {
+        const filteredFaces = await faceDB.searchByName(query);
+        renderRegisteredFaces(filteredFaces);
+    } catch (error) {
+        console.error('検索エラー:', error);
+    }
+}
+
+// データをエクスポート
+async function exportData() {
+    try {
+        const jsonData = await faceDB.exportAllData();
+
+        // ダウンロード
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `face-data-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        alert('データをエクスポートしました');
+    } catch (error) {
+        console.error('エクスポートエラー:', error);
+        alert('エクスポートに失敗しました: ' + error.message);
+    }
+}
+
+// データをインポート
+async function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        const text = await file.text();
+        const count = await faceDB.importData(text);
+
+        alert(`${count}件のデータをインポートしました`);
+
+        // 一覧を更新
+        await loadRegisteredFaces();
+
+        // ファイル選択をリセット
+        importFileEl.value = '';
+    } catch (error) {
+        console.error('インポートエラー:', error);
+        alert('インポートに失敗しました: ' + error.message);
+        importFileEl.value = '';
     }
 }
 

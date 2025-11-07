@@ -28,3 +28,7 @@ yarn-error.log*
 # Environment
 .env
 .env.local
+
+# Security scan outputs
+retire-output.json
+security-report.txt
